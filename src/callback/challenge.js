@@ -1,8 +1,9 @@
 // Instanciando el request.
 //Permite hacer peticiones a algun servidor en la nube
 let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+let API = 'https://rickandmortyapi.com/api/character/';
 
-function fetchData(url, callback) {
+function fetchData(url_api, callback) {
     let xhttp = new XMLHttpRequest();
     /* 
     A nuestra referencia xhttp le pasamos un LLAMADO 'open'
@@ -43,3 +44,28 @@ function fetchData(url, callback) {
     //Envio de la solicitud.
     xhttp.send();
 }
+
+// primero buscamos la lista de personajes
+fetchData(API, function(error1, data1) {
+    // si error, matamos retornando un error
+    if (error1) return console.error(error1);
+    // luego buscamos en la api el id de Rick
+    fetchData(API + data1.results[0].id, function(error2, data2) {
+         // si error, matamos retornando un error
+        if (error2) return console.error(error2);
+        // por ultimo la consulta a la api que contiene su dimension
+        fetchData(data2.origin.url, function(error3, data3) {
+            if (error3) return console.error(error3);
+
+            // mostramos los resultados 
+            console.log(data1.info.count);
+            console.log(data2.name);
+            console.log(data3.dimension);
+
+            // rutas de las peticiones en orden
+            console.log(API);
+            console.log(API + data1.results[0].id); 
+            console.log(data2.origin.url);
+        })
+    })
+})
